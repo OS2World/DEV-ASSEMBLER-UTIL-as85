@@ -1,0 +1,73 @@
+DEFINITION MODULE SymbolTable;
+
+        (********************************************************)
+        (*                                                      *)
+        (*            Symbol table for assembler                *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            25 May 1998                     *)
+        (*  Last edited:        4 June 1998                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+FROM SYSTEM IMPORT
+    (* type *)  CARD16;
+
+FROM Output IMPORT
+    (* type *)  psecttype;
+
+TYPE
+    String = RECORD
+                 pointer, length: CARDINAL;
+             END (*RECORD*);
+
+PROCEDURE AppendToStringTable (VAR (*IN*) source: ARRAY OF CHAR;
+                            VAR (*INOUT*) place: CARDINAL): String;
+
+    (* Copies an alphanumeric string from source to the string table,   *)
+    (* starting at source[place].  On return, place has been updated    *)
+    (* such that source[place] is the first unused character.           *)
+
+PROCEDURE StringValue (code: String;
+                       VAR (*OUT*) result: ARRAY OF CHAR): CARDINAL;
+
+    (* Sets result to the "normal" representation of a string, and      *)
+    (* returns its length.                                              *)
+
+PROCEDURE StringMatch (first: String;  second: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE iff the two strings are equal. *)
+
+PROCEDURE StringIsDot (name: String): BOOLEAN;
+
+    (* Returns TRUE iff name is the string '.' *)
+
+PROCEDURE PrintSymbolTable;
+
+    (* Writes the symbol table to the listing file. *)
+
+PROCEDURE getsym (VAR (*OUT*) symptr: CARDINAL;
+                  VAR (*INOUT*) sym_name: String;
+                  VAR (*OUT*) sym_value: CARD16;
+                  VAR (*OUT*) sym_defined, sym_equated: BOOLEAN;
+                  VAR (*OUT*) psect: psecttype);
+
+    (* Gets symbol from user symbol table.  Symbol name is           *)
+    (* pointed to by sym_name; value is returned in sym_value,       *)
+    (* its place in the symbol table is returned in symptr.  The     *)
+    (* Boolean output parameters are set as follows:                 *)
+    (*         sym_defined: symbol value is defined.                 *)
+    (*         sym_equated: symbol may be updated.                   *)
+    (* The symbol table SymTbl is kept sorted.                       *)
+    (* If the symbol is not already in the symbol table, a new       *)
+    (* entry is inserted.                                            *)
+
+PROCEDURE PutSym (symbol_name: String;  symbol_value: CARD16;
+                  sym_equated: BOOLEAN;  psect: psecttype);
+
+    (* Puts a symbol into the symbol table.  Its "defined" flag      *)
+    (* is set equal to TRUE.                                         *)
+
+END SymbolTable.
+

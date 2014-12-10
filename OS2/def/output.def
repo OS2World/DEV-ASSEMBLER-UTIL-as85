@@ -1,0 +1,90 @@
+DEFINITION MODULE Output;
+
+        (********************************************************)
+        (*                                                      *)
+        (*       Listfile and object output for assembler       *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            25 May 1998                     *)
+        (*  Last edited:        28 May 1998                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM SYSTEM IMPORT
+    (*type*)  CARD8, CARD16;
+
+
+TYPE psecttype = (abs_psect, rel_psect, external_symbol);
+
+PROCEDURE SetOutputFileNames (VAR (*IN*) srcname: ARRAY OF CHAR);
+
+    (* Sets listing and object file names, based on a given source *)
+    (* file name.                                                  *)
+
+PROCEDURE OpenOutputFiles (list, hex: BOOLEAN);
+
+    (* Opens the listing and/or hex code files.         *)
+    (* Also clears the count of the number of errors.   *)
+
+PROCEDURE CloseOutputFiles(): CARDINAL;
+
+    (* If any output files are open, closes them.  As a side-effect,    *)
+    (* returns the error count.                                         *)
+
+PROCEDURE ClearPreamble;
+
+    (* Resets the listing buffer. *)
+
+PROCEDURE ClearLocationCounter;
+
+    (* Sets the location counter to an initial default. *)
+
+PROCEDURE IncrementLocationCounter;
+
+    (* Adds 1 to the current location counter. *)
+
+PROCEDURE SetLocationCounter (value: CARD16;  psect: psecttype);
+
+    (* Gives a new value to the location counter and current psect. *)
+
+PROCEDURE ReadLocationCounter (VAR (*OUT*) value: CARD16;
+                               VAR (*OUT*) psect: psecttype);
+
+    (* Returns the current value of the location counter and psect. *)
+
+PROCEDURE SetPsect (psect: psecttype);
+
+    (* Switches to a new psect. *)
+
+PROCEDURE ErrMes (code: CHAR);
+
+    (* Puts an error code in the listing. *)
+
+PROCEDURE PrtLC;
+
+    (* Puts the location counter (in hex) into the listing buffer. *)
+
+PROCEDURE ListTheLine (VAR (*IN*) sourceline: ARRAY OF CHAR);
+
+    (* Puts the current line out to the listing file. *)
+
+PROCEDURE PrintLine (line: ARRAY OF CHAR);
+
+    (* Sends a line of text to the listing file. *)
+
+PROCEDURE putobject (value: CARD8;  VAR (*INOUT*) checksum: CARD8);
+
+    (* Puts a byte out to the object file, and updates       *)
+    (* the checksum.                                         *)
+
+PROCEDURE PutObjectCode (opcode: CARD8;  place: CARDINAL;
+                            word_flag: BOOLEAN;  psect: psecttype);
+
+    (* Puts code out to the listing and object files.  *)
+
+PROCEDURE FlushBuffer;
+
+END Output.
+
